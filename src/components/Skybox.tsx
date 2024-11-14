@@ -12,7 +12,7 @@ const HDRISky = () => {
     //darkmode
     const { theme } = useTheme();
 
-    const hdrPath = `/assets/${theme === 'dark' ? 'kloppenheim_02_puresky_2k' : 'kloofendal_28d_misty_puresky_2k'}.hdr`;
+    const hdrPath = `/assets/${theme === 'dark' ? 'starry_night_sky_dome_2k' : 'kloofendal_28d_misty_puresky_2k'}.hdr`;
 
     const texture = useLoader(RGBELoader, hdrPath);
     texture.magFilter = LinearFilter;

@@ -55,7 +55,8 @@ function App() {
     }
 
     const { theme } = useTheme();
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const [showHelpers, setShowHelpers] = useState<boolean>(true);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     return (
         <>
@@ -129,10 +130,11 @@ function App() {
                     )}
                 </div>
             </div>
-            <Viewer models={models} canvasRef={canvasRef} />
+            <Viewer models={models} canvasRef={canvasRef} showHelpers={showHelpers} />
+
             <div className={`flex gap-2 px-4 py-2 justify-center fixed top-0 right-0 z-10`}>
                 <ThemeSwitch />
-                <Screenshot canvasRef={canvasRef} theme={theme} />
+                <Screenshot canvasRef={canvasRef} theme={theme} setShowHelpers={setShowHelpers} />
             </div>
             <Socials />
         </>
