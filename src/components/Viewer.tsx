@@ -38,7 +38,6 @@ const Viewer: React.FC<ViewerProps> = ({ models, canvasRef, showHelpers }) => {
     return (
         <Canvas
             ref={canvasRef}
-            style={{ width: '100vw', height: '100vh' }}
             gl={{ preserveDrawingBuffer: true }}
             camera={{ position: [0, 2, 4] }}
         >
