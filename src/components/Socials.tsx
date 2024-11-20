@@ -8,7 +8,6 @@ const Socials = () => {
         <div
             className={`absolute bottom-2 left-2 z-20 backdrop-blur-md p-2 rounded-md 
             ${theme === 'dark' ? 'bg-white/10' : 'bg-black/10'}`}
-            id="jernil-socials"
         >
             <div>
                 <a

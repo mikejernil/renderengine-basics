@@ -18,7 +18,7 @@ function App() {
         {
             url: string;
             name: string;
-            type: 'splat' | 'obj' | 'fbx';
+            type: 'splat' | 'obj' | 'fbx' | 'glb';
         }[]
     >([]);
 
@@ -26,11 +26,12 @@ function App() {
         const file = event.target.files?.[0];
         if (file) {
             const fileUrl = URL.createObjectURL(file);
-            let type: 'splat' | 'obj' | 'fbx' = 'obj';
+            let type: 'splat' | 'obj' | 'fbx' | 'glb' = 'obj';
 
             if (file.name.endsWith('.splat')) type = 'splat';
             else if (file.name.endsWith('.fbx')) type = 'fbx';
             else if (file.name.endsWith('.obj')) type = 'obj';
+            else if (file.name.endsWith('.glb')) type = 'glb';
             else return alert('Unsupported file format');
 
             setModels([...models, { url: fileUrl, name: file.name, type }]);
@@ -39,10 +40,11 @@ function App() {
 
     const loadUrlModel = () => {
         if (url) {
-            let type: 'splat' | 'obj' | 'fbx' = 'obj';
+            let type: 'splat' | 'obj' | 'fbx' | 'glb' = 'obj';
             if (url.endsWith('.splat')) type = 'splat';
             else if (url.endsWith('.fbx')) type = 'fbx';
             else if (url.endsWith('.obj')) type = 'obj';
+            else if (url.endsWith('.glb')) type = 'glb';
             else return alert('Unsupported URL file format');
 
             setModels([...models, { url, name: url.split('/').pop() ?? '', type }]);

@@ -20,10 +20,8 @@ const ThemeSwitch: React.FC = () => {
             </div>
 
             <div
-                className={`border-2 absolute w-6 h-6 rounded-full bg-white  transition-transform duration-300 cursor-pointer flex items-center justify-center ${
-                    theme === 'light'
-                        ? 'translate-x-1 bg-white border-white'
-                        : 'translate-x-8 bg-black border-black'
+                className={`border-2 border-black/10 absolute w-6 h-6 rounded-full bg-white  transition-transform duration-300 cursor-pointer flex items-center justify-center ${
+                    theme === 'light' ? 'translate-x-1 bg-white' : 'translate-x-8 bg-black'
                 }`}
             />
         </div>

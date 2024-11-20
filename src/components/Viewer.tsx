@@ -10,6 +10,7 @@ import {
     OrbitControls,
     PivotControls,
     Splat,
+    useGLTF,
 } from '@react-three/drei';
 import { Canvas, useLoader } from '@react-three/fiber';
 
@@ -19,7 +20,7 @@ import Skybox from './Skybox';
 interface Model {
     url: string;
     name: string;
-    type: 'splat' | 'obj' | 'fbx';
+    type: 'splat' | 'obj' | 'fbx' | 'glb';
 }
 interface ModelsProps {
     model: Model;
@@ -60,10 +61,10 @@ const Viewer: React.FC<ViewerProps> = ({ models, canvasRef, showHelpers }) => {
                     position={[0, 0.01, 0]}
                     args={[10, 10]}
                     cellSize={0.5}
-                    cellThickness={0.5}
+                    cellThickness={0.75}
                     cellColor={theme === 'light' ? '#333' : '#ddd'}
                     sectionSize={5}
-                    sectionThickness={1.5}
+                    sectionThickness={2}
                     sectionColor={theme === 'light' ? '#333' : '#ddd'}
                     fadeDistance={25}
                     fadeStrength={2}
@@ -105,16 +106,22 @@ function ObjModel({ url }: { url: string }) {
     const obj = useLoader(OBJLoader, url);
     return <primitive object={obj} />;
 }
+// GLB Model component
+function GlbModel({ url }: { url: string }) {
+    const gltf = useGLTF(url);
+    return <primitive object={gltf.scene} />;
+}
 
 function Models({ model, showHelpers }: ModelsProps) {
     return (
         <Suspense fallback={<Box />}>
-            <PivotControls disableScaling annotations={true} visible={showHelpers}>
+            <PivotControls anchor={[0, 1, 0]} annotations={true} visible={showHelpers}>
                 {model.type === 'splat' && (
                     <Splat alphaTest={0.1} position={[0, 0, 0]} src={model.url} />
                 )}
                 {model.type === 'fbx' && <FbxModel url={model.url} />}
                 {model.type === 'obj' && <ObjModel url={model.url} />}
+                {model.type === 'glb' && <GlbModel url={model.url} />}
             </PivotControls>
         </Suspense>
     );
