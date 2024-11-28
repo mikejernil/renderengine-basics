@@ -98,13 +98,13 @@ function Box() {
 // FBX Model component
 function FbxModel({ url }: { url: string }) {
     const fbx = useLoader(FBXLoader, url);
-    return <primitive object={fbx} />;
+    return <primitive object={fbx} scale={0.01} />;
 }
 
 // OBJ Model component
 function ObjModel({ url }: { url: string }) {
     const obj = useLoader(OBJLoader, url);
-    return <primitive object={obj} />;
+    return <primitive object={obj} scale={0.5} />;
 }
 // GLB Model component
 function GlbModel({ url }: { url: string }) {
