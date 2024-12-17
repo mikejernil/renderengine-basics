@@ -8,8 +8,9 @@ import {
     GizmoViewport,
     Grid,
     OrbitControls,
+    PivotControls,
     Splat,
-    TransformControls,
+    useGLTF,
 } from '@react-three/drei';
 import { Canvas, useLoader } from '@react-three/fiber';
 
@@ -19,56 +20,59 @@ import Skybox from './Skybox';
 interface Model {
     url: string;
     name: string;
-    type: 'splat' | 'obj' | 'fbx';
+    type: 'splat' | 'obj' | 'fbx' | 'glb';
+}
+interface ModelsProps {
+    model: Model;
+    showHelpers: boolean;
 }
 
 interface ViewerProps {
     models: Model[];
     canvasRef: React.RefObject<HTMLCanvasElement>;
+    showHelpers: boolean;
 }
 
-const Viewer: React.FC<ViewerProps> = ({ models, canvasRef }) => {
+const Viewer: React.FC<ViewerProps> = ({ models, canvasRef, showHelpers }) => {
     const { theme } = useTheme();
 
     return (
         <Canvas
             ref={canvasRef}
-            style={{
-                width: '100vw',
-                height: '100vh',
-            }}
             gl={{ preserveDrawingBuffer: true }}
             camera={{ position: [0, 2, 4] }}
         >
             <ambientLight />
             {models.map((model, index) => (
-                <Models key={index} model={model} />
+                <Models key={index} model={model} showHelpers={showHelpers} />
             ))}
-            <GizmoHelper alignment="bottom-right" margin={[60, 60]} renderPriority={1}>
-                <GizmoViewport
-                    axisColors={
-                        theme === 'dark' ? ['#fff', '#fff', '#fff'] : ['#000', '#000', '#000']
-                    }
-                    labelColor={theme === 'dark' ? 'black' : 'white'}
+            {showHelpers && (
+                <GizmoHelper alignment="bottom-right" margin={[60, 60]} renderPriority={1}>
+                    <GizmoViewport
+                        axisColors={
+                            theme === 'dark' ? ['#fff', '#fff', '#fff'] : ['#000', '#000', '#000']
+                        }
+                        labelColor={theme === 'dark' ? 'black' : 'white'}
+                    />
+                </GizmoHelper>
+            )}
+            {showHelpers && (
+                <Grid
+                    position={[0, 0.01, 0]}
+                    args={[10, 10]}
+                    cellSize={0.5}
+                    cellThickness={0.75}
+                    cellColor={theme === 'light' ? '#333' : '#ddd'}
+                    sectionSize={5}
+                    sectionThickness={2}
+                    sectionColor={theme === 'light' ? '#333' : '#ddd'}
+                    fadeDistance={25}
+                    fadeStrength={2}
+                    followCamera={false}
+                    infiniteGrid={true}
                 />
-            </GizmoHelper>
-            <Grid
-                position={[0, 0.01, 0]}
-                args={[10, 10]}
-                cellSize={0.5}
-                cellThickness={0.5}
-                cellColor={theme === 'light' ? '#333' : '#ddd'}
-                sectionSize={5}
-                sectionThickness={1.5}
-                sectionColor={theme === 'light' ? '#333' : '#ddd'}
-                fadeDistance={25}
-                fadeStrength={2}
-                followCamera={false}
-                infiniteGrid={true}
-            />
+            )}
             <Skybox type="HDRI" />
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
             <OrbitControls
                 makeDefault
                 maxPolarAngle={Math.PI / 1.6}
@@ -94,32 +98,31 @@ function Box() {
 // FBX Model component
 function FbxModel({ url }: { url: string }) {
     const fbx = useLoader(FBXLoader, url);
-    return <primitive object={fbx} />;
+    return <primitive object={fbx} scale={0.01} />;
 }
 
 // OBJ Model component
 function ObjModel({ url }: { url: string }) {
     const obj = useLoader(OBJLoader, url);
-    return <primitive object={obj} />;
+    return <primitive object={obj} scale={0.5} />;
 }
-function Models({ model }: { model: Model }) {
+// GLB Model component
+function GlbModel({ url }: { url: string }) {
+    const gltf = useGLTF(url);
+    return <primitive object={gltf.scene} />;
+}
+
+function Models({ model, showHelpers }: ModelsProps) {
     return (
         <Suspense fallback={<Box />}>
-            {model.type === 'splat' && (
-                <TransformControls mode="translate">
+            <PivotControls anchor={[0, 1, 0]} annotations={true} visible={showHelpers}>
+                {model.type === 'splat' && (
                     <Splat alphaTest={0.1} position={[0, 0, 0]} src={model.url} />
-                </TransformControls>
-            )}
-            {model.type === 'fbx' && (
-                <TransformControls mode="translate">
-                    <FbxModel url={model.url} />
-                </TransformControls>
-            )}
-            {model.type === 'obj' && (
-                <TransformControls mode="translate">
-                    <ObjModel url={model.url} />
-                </TransformControls>
-            )}
+                )}
+                {model.type === 'fbx' && <FbxModel url={model.url} />}
+                {model.type === 'obj' && <ObjModel url={model.url} />}
+                {model.type === 'glb' && <GlbModel url={model.url} />}
+            </PivotControls>
         </Suspense>
     );
 }
